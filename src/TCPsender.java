@@ -1,14 +1,18 @@
 import java.io.IOException;
-import java.net.*;
+import java.io.OutputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.Socket;
 
-public class UDPsender extends Thread{
+public class TCPsender extends Thread{
 
     private long k;
     private int n;
     private double rate;
     private int sendingTime;
 
-    public UDPsender(long k, int n,int sendingTime ) {
+    public TCPsender(long k, int n, int sendingTime ) {
         this.k = k;
         this.n = n;
         this.sendingTime = sendingTime;
@@ -19,22 +23,21 @@ public class UDPsender extends Thread{
         long packetCounter = 0;
 
         try {
-            InetAddress dst = InetAddress.getLocalHost();
             int port = 3000;
             byte[] outbuf = new byte[1400];
-            int len = 1400;
-            DatagramPacket request = new DatagramPacket(outbuf, len, dst, port);
-            DatagramSocket socket = new DatagramSocket();
 
             long startTime = System.currentTimeMillis();
             long stopTime = startTime + sendingTime * 1000;
 
+            Socket so = new Socket("localhost",port);
 
+            //client
+           OutputStream output = so.getOutputStream();
 
             while(startTime < stopTime){
                 if((packetCounter % n) == 0)
                     sleep(k);
-                socket.send(request);
+                output.write(outbuf);
                 packetCounter++;
 
                 startTime = System.currentTimeMillis();
@@ -42,6 +45,7 @@ public class UDPsender extends Thread{
 
             }
             rate = (packetCounter*1400*8/1000.) / sendingTime;
+            so.close();
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }

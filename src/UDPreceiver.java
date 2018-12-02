@@ -52,8 +52,6 @@ public class UDPreceiver extends Thread{
                     e.printStackTrace();
                 }
             }
-            //System.out.println(startTime);
-            //System.out.println(timeout);
             humanTime = ((stopTime - startTime) - timeout) / 1000.0;
         }
         ds.close();
