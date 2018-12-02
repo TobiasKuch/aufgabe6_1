@@ -27,7 +27,7 @@ public class UDPsender extends Thread{
             DatagramSocket socket = new DatagramSocket();
 
             long startTime = System.currentTimeMillis();
-            long stopTime = startTime + sendingTime;
+            long stopTime = startTime + sendingTime * 1000;
 
 
 
@@ -39,7 +39,7 @@ public class UDPsender extends Thread{
 
                 startTime = System.currentTimeMillis();
 
-                rate = (packetCounter*1400*8/1000.);
+                rate = (packetCounter*1400*8/1000.) / sendingTime;
             }
 
 
