@@ -8,7 +8,7 @@ public class UDPreceiver extends Thread{
     private DatagramSocket ds;
     private byte[] buf = new byte[1400];
     private DatagramPacket dp = new DatagramPacket(buf, 1400); ;
-    private int intervall = 30000;
+    private int timeout;
     private int packetCounter = 0;
     private long startTime;
     private long stopTime;
@@ -16,10 +16,14 @@ public class UDPreceiver extends Thread{
     private double humanTime;
     private double rate;
 
+    public UDPreceiver(int timeout) {
+        this.timeout = timeout;
+    }
+
     public static void main(String[] args) throws Exception {
-        UDPreceiver receiver = new UDPreceiver();
+        UDPreceiver receiver = new UDPreceiver(50);
         receiver.start();
-        UDPsender sender = new UDPsender(20, 100);
+        UDPsender sender = new UDPsender(20, 100, 1000);
         sender.start();
     }
 
@@ -34,7 +38,7 @@ public class UDPreceiver extends Thread{
         startTime = System.currentTimeMillis();
         while(weiterGehts){
             try {
-                ds.setSoTimeout(intervall);
+                ds.setSoTimeout(timeout);
                 ds.receive(dp);
                 packetCounter++;
             } catch (IOException e) {
@@ -45,7 +49,7 @@ public class UDPreceiver extends Thread{
                     e.printStackTrace();
                 }
             }
-            humanTime = ((stopTime - startTime) - intervall) / 1000.0;
+            humanTime = ((stopTime - startTime) - timeout) / 1000.0;
         }
         ds.close();
         // (packetCounter * length * 8 Bit / kilo) / time

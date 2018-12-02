@@ -6,14 +6,17 @@ public class UDPsender extends Thread{
     private long k;
     private int n;
     private double rate;
+    private int sendingTime;
 
-    public UDPsender(long k, int n) {
+    public UDPsender(long k, int n,int sendingTime ) {
         this.k = k;
         this.n = n;
+        this.sendingTime = sendingTime;
     }
 
     @Override
     public void run() {
+        long packetCounter = 0;
 
         try {
             InetAddress dst = InetAddress.getLocalHost();
@@ -24,9 +27,9 @@ public class UDPsender extends Thread{
             DatagramSocket socket = new DatagramSocket();
 
             long startTime = System.currentTimeMillis();
-            long stopTime = startTime + 1000;
+            long stopTime = startTime + sendingTime;
 
-            long packetCounter = 0;
+
 
             while(startTime < stopTime){
                 if((packetCounter % n) == 0)
@@ -43,7 +46,6 @@ public class UDPsender extends Thread{
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
-
         System.out.println("Sender: rate " + rate + " kbit/s");
     }
 
